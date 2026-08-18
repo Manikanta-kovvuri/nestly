@@ -129,7 +129,58 @@ See [`.env.example`](.env.example) for the full list. Key variables:
 | `JWT_SECRET` | Secret for signing JWTs — use a long random value |
 | `JWT_EXPIRES_IN` | Token lifetime, e.g. `7d` |
 | `FRONTEND_URL` | Allowed CORS origin |
-| `SMTP_*` | Email / SMTP credentials |
+
+---
+
+## Production Configuration
+
+To deploy Nestly V1 to a production environment (like Railway, Vercel, or AWS), you must configure the following:
+
+### 1. Required Environment Variables
+
+**Backend (`Backend/.env`)**:
+- `NODE_ENV=production`
+- `PORT=3000` (or injected by hosting provider)
+- `DATABASE_URL` (Production PostgreSQL URL)
+- `JWT_SECRET` (Secure random string, do NOT commit this)
+- `JWT_EXPIRES_IN=7d`
+- `FRONTEND_URL=https://<your-production-frontend-domain>`
+
+**Frontend (`Frontend/.env`)**:
+- `VITE_API_BASE_URL=https://<your-production-backend-domain>/api/v1`
+
+> [!WARNING]
+> Never commit real secrets or `.env` files into source control. Always use the hosting provider's secrets management dashboard.
+
+### 2. Backend Production Deployment
+Nestly uses the standard NestJS build pipeline.
+
+**Build Command**:
+```bash
+npm run build
+```
+
+**Startup Command**:
+```bash
+npm run start:prod
+```
+
+**Database Migrations**:
+In production, do NOT use `migrate dev`. Use the following command to apply migrations safely:
+```bash
+npx prisma migrate deploy
+```
+
+### 3. Frontend Production Deployment
+The frontend is a React Single Page Application (SPA) built with Vite.
+
+**Build Command**:
+```bash
+npm run build
+```
+
+**SPA Routing Requirements**:
+When deploying the `dist` folder to a static host (like Vercel, Netlify, or NGINX), you MUST configure all requests to rewrite to `index.html`. This ensures that direct navigation (e.g., `/maintenance/20`) routes through React Router.
 
 ---
 
