@@ -1,0 +1,10 @@
+/**
+ * common/guards/
+ *
+ * Guards will be implemented here in Milestone 3 (Authentication):
+ *   - jwt-auth.guard.ts    — protects routes requiring a valid JWT
+ *   - roles.guard.ts       — enforces role-based access control (RBAC)
+ *
+ * Placeholder file to establish the directory in source control.
+ */
+export {};

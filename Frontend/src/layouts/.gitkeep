@@ -1,0 +1,10 @@
+/**
+ * layouts/
+ *
+ * Application layout components will be created here in Milestone 9:
+ *   - AppLayout.tsx       — main layout with sidebar navigation for authenticated users
+ *   - AuthLayout.tsx      — centered layout for login/register pages
+ *   - OwnerLayout.tsx     — owner-specific navigation items
+ *   - TenantLayout.tsx    — tenant-specific navigation items
+ */
+export {};

@@ -1,0 +1,10 @@
+/**
+ * common/decorators/
+ *
+ * Custom decorators will be implemented here in Milestone 3:
+ *   - current-user.decorator.ts   — extracts authenticated user from request
+ *   - roles.decorator.ts          — @Roles(Role.OWNER, Role.TENANT) metadata setter
+ *
+ * Placeholder to establish the directory in source control.
+ */
+export {};

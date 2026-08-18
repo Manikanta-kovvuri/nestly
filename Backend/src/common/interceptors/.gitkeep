@@ -1,0 +1,10 @@
+/**
+ * common/interceptors/
+ *
+ * Interceptors will be implemented here:
+ *   - response.interceptor.ts — wraps successful responses in a standard envelope
+ *   - logging.interceptor.ts  — optional request/response logging
+ *
+ * Placeholder to establish the directory in source control.
+ */
+export {};

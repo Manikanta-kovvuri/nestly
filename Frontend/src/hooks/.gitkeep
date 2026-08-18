@@ -1,0 +1,12 @@
+/**
+ * hooks/
+ *
+ * Custom React hooks will be created here as features are implemented:
+ *   - useAuth.ts          — convenience hook wrapping useAuthStore selectors
+ *   - useProperties.ts    — data fetching for owner properties
+ *   - useLeases.ts        — lease data fetching and mutations
+ *   - usePayments.ts      — payment history and recording
+ *   - useMaintenance.ts   — maintenance request management
+ *   - useToast.ts         — toast notification helpers
+ */
+export {};

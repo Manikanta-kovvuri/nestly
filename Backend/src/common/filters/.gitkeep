@@ -1,0 +1,10 @@
+/**
+ * common/filters/
+ *
+ * Exception filters will be implemented here:
+ *   - http-exception.filter.ts  — global exception filter for consistent error responses
+ *   - prisma-exception.filter.ts — catches Prisma errors and maps to HTTP exceptions
+ *
+ * Placeholder to establish the directory in source control.
+ */
+export {};

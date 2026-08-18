@@ -1,0 +1,43 @@
+# ─── Environment ────────────────────────────────────────────────────────────────
+.env
+.env.local
+.env.*.local
+
+# ─── Node ────────────────────────────────────────────────────────────────────────
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# ─── Build outputs ───────────────────────────────────────────────────────────────
+dist/
+build/
+.next/
+out/
+
+# ─── NestJS ──────────────────────────────────────────────────────────────────────
+Backend/dist/
+
+# ─── Prisma ──────────────────────────────────────────────────────────────────────
+# Keep migrations tracked; ignore generated client inside node_modules
+# (client is auto-generated via postinstall / prisma generate)
+
+# ─── Frontend ────────────────────────────────────────────────────────────────────
+Frontend/dist/
+
+# ─── Testing ─────────────────────────────────────────────────────────────────────
+coverage/
+.nyc_output/
+
+# ─── OS & Editor ─────────────────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+.vscode/
+.idea/
+
+# ─── Logs ────────────────────────────────────────────────────────────────────────
+*.log
+logs/

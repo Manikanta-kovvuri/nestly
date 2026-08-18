@@ -1,0 +1,9 @@
+/**
+ * components/
+ *
+ * Shared UI components will be created here:
+ *   - ui/         — shadcn/ui generated components (auto-generated, do not edit)
+ *   - common/     — shared application components (LoadingSpinner, ErrorBoundary, etc.)
+ *   - layout/     — layout components (Sidebar, Header, etc.)
+ */
+export {};

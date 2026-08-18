@@ -1,0 +1,173 @@
+// This is your Prisma schema file.
+// Learn more: https://pris.ly/d/prisma-schema
+//
+// Currency convention:
+//   All monetary amounts (e.g. rentAmount, amount) are stored as integers
+//   representing the smallest currency unit (paise for INR).
+//   Example: ₹15,000 = 1,500,000 paise
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// -----------------------------------------------------------------------------
+// ENUMS
+// -----------------------------------------------------------------------------
+
+enum Role {
+  ADMIN
+  OWNER
+  TENANT
+}
+
+enum UnitStatus {
+  VACANT
+  OCCUPIED
+  MAINTENANCE
+}
+
+enum LeaseStatus {
+  PENDING
+  ACTIVE
+  EXPIRED
+  TERMINATED
+}
+
+enum PaymentStatus {
+  PENDING
+  PAID
+  FAILED
+}
+
+enum PaymentMethod {
+  CASH
+  BANK_TRANSFER
+  UPI
+  CARD
+  OTHER
+}
+
+enum MaintenanceStatus {
+  OPEN
+  IN_PROGRESS
+  RESOLVED
+  CLOSED
+}
+
+// -----------------------------------------------------------------------------
+// MODELS
+// -----------------------------------------------------------------------------
+
+model User {
+  id           Int      @id @default(autoincrement())
+  name         String
+  email        String   @unique
+  passwordHash String
+  role         Role     @default(TENANT)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  properties          Property[]
+  tenantProfile       Tenant?
+  maintenanceRequests Maintenance[] @relation("ReportedMaintenance")
+}
+
+model Property {
+  id        Int      @id @default(autoincrement())
+  name      String
+  address   String
+  ownerId   Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  owner User   @relation(fields: [ownerId], references: [id], onDelete: Restrict)
+  units Unit[]
+
+  @@index([ownerId])
+}
+
+model Unit {
+  id         Int        @id @default(autoincrement())
+  propertyId Int
+  unitNo     Int
+  floor      String
+  status     UnitStatus @default(VACANT)
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
+
+  property            Property      @relation(fields: [propertyId], references: [id], onDelete: Restrict)
+  leases              Lease[]
+  maintenanceRequests Maintenance[]
+
+  @@unique([propertyId, unitNo])
+  @@index([propertyId])
+}
+
+model Tenant {
+  id        Int      @id @default(autoincrement())
+  userId    Int      @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user   User    @relation(fields: [userId], references: [id], onDelete: Restrict)
+  leases Lease[]
+}
+
+model Lease {
+  id         Int         @id @default(autoincrement())
+  tenantId   Int
+  unitId     Int
+  startDate  DateTime
+  endDate    DateTime
+  rentAmount Int
+  status     LeaseStatus @default(PENDING)
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
+
+  tenant   Tenant    @relation(fields: [tenantId], references: [id], onDelete: Restrict)
+  unit     Unit      @relation(fields: [unitId], references: [id], onDelete: Restrict)
+  payments Payment[]
+
+  @@index([tenantId])
+  @@index([unitId])
+  @@index([status])
+}
+
+model Payment {
+  id        Int           @id @default(autoincrement())
+  leaseId   Int
+  amount    Int
+  method    PaymentMethod
+  status    PaymentStatus @default(PENDING)
+  paidAt    DateTime?
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+
+  lease Lease @relation(fields: [leaseId], references: [id], onDelete: Restrict)
+
+  @@index([leaseId])
+}
+
+model Maintenance {
+  id               Int               @id @default(autoincrement())
+  unitId           Int
+  reportedByUserId Int
+  title            String
+  category         String?
+  description      String
+  status           MaintenanceStatus @default(OPEN)
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+
+  unit       Unit @relation(fields: [unitId], references: [id], onDelete: Restrict)
+  reportedBy User @relation("ReportedMaintenance", fields: [reportedByUserId], references: [id], onDelete: Restrict)
+
+  @@index([unitId])
+  @@index([reportedByUserId])
+  @@index([status])
+}
