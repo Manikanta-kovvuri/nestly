@@ -1,77 +1,31 @@
 # Nestly
 
-Multi-tenant property management SaaS for property owners and tenants.
+Multi-Tenant Property Management Platform
 
-![Backend](https://img.shields.io/badge/Backend-NestJS-E0234E)
-![Frontend](https://img.shields.io/badge/Frontend-React-61DAFB)
-![TypeScript](https://img.shields.io/badge/TypeScript-3178C6)
-![PostgreSQL](https://img.shields.io/badge/PostgreSQL-4169E1)
-![Prisma](https://img.shields.io/badge/Prisma-2D3748)
-![License](https://img.shields.io/badge/License-MIT-green)
-
-## Project Overview
-
-Nestly is a multi-tenant SaaS application designed to streamline property management for landlords and property owners while offering a clear and transparent portal for tenants.
-
-The problem it solves: Managing properties, leases, maintenance, and payments across multiple units and tenants is often handled using fragmented tools (spreadsheets, emails, cash). Nestly brings all these operations into a unified platform with strict data isolation.
-
-### Primary Users
-
-- **OWNER**: Landlords and property managers who need to oversee their portfolio, units, and leases.
-- **TENANT**: Renters who need to view lease details, track payments, and report maintenance issues.
-- **ADMIN**: Platform administrators with system-level visibility.
-
-### Core Workflows
-
-**OWNER**:
-- Register/login
-- Manage properties
-- Manage units
-- Create tenants
-- Create/manage leases
-- Record payments
-- Manage maintenance requests
-- View dashboard analytics
-
-**TENANT**:
-- Login
-- View active lease/home
-- View payments
-- Report maintenance issues
-- Track maintenance status
-
-**ADMIN**:
-- Platform-level visibility according to implemented backend RBAC
+Nestly is a full-stack multi-tenant property management platform built with React, NestJS, PostgreSQL, and Prisma. It provides secure workflows for property owners, tenants, and administrators including property management, unit management, tenant and lease lifecycle management, payment tracking, maintenance workflows, and dashboard analytics.
 
 ---
 
 ## Engineering Highlights
 
-Nestly employs professional, production-ready engineering patterns:
-
-- **Multi-tenant data isolation**: Strict authorization constraints ensuring Owners and Tenants only access their own data.
-- **JWT authentication**: Secure stateless authentication strategy.
-- **Role-Based Access Control**: Decorator-driven RBAC layer on all endpoints.
-- **Ownership-based authorization**: Verification of data ownership before mutations.
-- **Prisma ORM**: Type-safe database interactions with relational constraints.
-- **PostgreSQL**: Robust, ACID-compliant relational data store.
-- **RESTful API design**: Clear, resource-oriented endpoint architecture.
-- **DTO validation**: `class-validator` securing all incoming request payloads.
-- **bcrypt password hashing**: Secure credential storage.
-- **Rate limiting**: `@nestjs/throttler` preventing abuse and brute-force attacks.
-- **Helmet security headers**: HTTP header security.
-- **CORS**: Configured cross-origin resource sharing.
-- **Prisma exception handling**: Global exception filter mapping DB errors to standard HTTP responses.
-- **Graceful shutdown**: Configured to cleanly disconnect from the database on termination.
-- **Production environment validation**: Strict `.env` validation schema on startup.
-- **Database-level aggregation**: Efficient analytics queries handled at the database level.
-- **Transactional tenant creation**: Atomic creation of User and Tenant profiles.
-- **Lease lifecycle management**: State transitions for leases.
-- **Payment lifecycle**: Status tracking for rent payments.
-- **Maintenance lifecycle**: Clear resolution steps for reported issues.
-- **Frontend API abstraction**: Axios instance configured with automatic token injection.
-- **Zustand authentication state**: Performant, minimal state management.
-- **Responsive React UI**: Polished, Tailwind v4 and shadcn/ui powered interface.
+- **Multi-tenant ownership isolation**: Strict database and application-level isolation ensuring users only access their own data and resources.
+- **JWT authentication**: Secure stateless authentication implementation.
+- **Role-Based Access Control**: Decorator-driven RBAC layer enforcing endpoint permissions.
+- **Resource-level authorization**: Ownership verification before any data mutation occurs.
+- **Property and unit management**: Hierarchical data modeling for property portfolios and individual units.
+- **Tenant and lease lifecycle management**: State transitions for leases and tenant profile management.
+- **Payment tracking**: Financial transaction tracking linked to specific leases and tenants.
+- **Maintenance lifecycle management**: End-to-end issue reporting and resolution workflows.
+- **Database-level dashboard aggregation**: Efficient analytics using PostgreSQL aggregate functions via Prisma.
+- **DTO validation**: `class-validator` ensuring data integrity at the API boundary.
+- **Global validation pipe**: Enforcing validation rules automatically, with `whitelist` and `forbidNonWhitelisted` to prevent payload injection.
+- **Prisma exception handling**: Centralized filters mapping database errors (like unique constraint violations) to standardized HTTP responses.
+- **Security headers with Helmet**: Automatic HTTP header security against common vulnerabilities.
+- **Authentication rate limiting**: `@nestjs/throttler` guarding against brute-force attacks.
+- **Request body size limits**: Configured to prevent denial-of-service through oversized payloads.
+- **Graceful shutdown**: Proper database connection termination on SIGTERM/SIGINT.
+- **Production environment validation**: Strict startup validation of `.env` configurations.
+- **PostgreSQL relational modeling**: ACID-compliant data storage with enforced foreign key constraints.
 
 ---
 
@@ -79,53 +33,21 @@ Nestly employs professional, production-ready engineering patterns:
 
 ```mermaid
 graph TD
-    UI[React/Vite] -->|HTTP Requests| API[Axios API Layer]
-    API -->|REST API| Nest[NestJS REST API]
+    UI[React/Vite SPA] -->|HTTPS / REST| API[NestJS API]
     
     subgraph Backend
-        Nest --> Auth[JWT / RBAC]
-        Auth --> Domain[Domain Services]
-        
-        Domain --> M_Auth[Auth Module]
-        Domain --> M_Prop[Property Module]
-        Domain --> M_Unit[Unit Module]
-        Domain --> M_Ten[Tenant Module]
-        Domain --> M_Lease[Lease Module]
-        Domain --> M_Pay[Payment Module]
-        Domain --> M_Maint[Maintenance Module]
-        Domain --> M_Dash[Dashboard Module]
-        
+        API --> Auth[JWT Authentication]
+        Auth --> RBAC[RBAC / Ownership Authorization]
+        RBAC --> Domain[Domain Services]
         Domain --> ORM[Prisma ORM]
     end
     
     ORM --> DB[(PostgreSQL)]
 
     style UI fill:#61DAFB,stroke:#333,stroke-width:2px,color:black
-    style Nest fill:#E0234E,stroke:#333,stroke-width:2px,color:white
+    style API fill:#E0234E,stroke:#333,stroke-width:2px,color:white
     style DB fill:#4169E1,stroke:#333,stroke-width:2px,color:white
 ```
-
-### Ownership Boundary
-
-**OWNER**
-↓
-Properties
-↓
-Units
-↓
-Leases
-↓
-Payments / Maintenance
-
-**TENANT**
-↓
-Tenant Profile
-↓
-Active Lease
-↓
-Unit
-↓
-Payments / Maintenance
 
 ---
 
@@ -133,181 +55,137 @@ Payments / Maintenance
 
 | Module | Status |
 |---|---|
-| Authentication | ✅ |
-| RBAC | ✅ |
-| Property Management | ✅ |
-| Unit Management | ✅ |
-| Tenant Management | ✅ |
-| Lease Management | ✅ |
-| Payment Management | ✅ |
-| Maintenance | ✅ |
-| Dashboard Analytics | ✅ |
+| Authentication | Complete |
+| RBAC | Complete |
+| Properties | Complete |
+| Units | Complete |
+| Tenants | Complete |
+| Leases | Complete |
+| Payments | Complete |
+| Maintenance | Complete |
+| Dashboard Analytics | Complete |
 | Notifications | Planned |
 | Invoices | Planned |
-| Payment Gateway | Planned |
+| Payment Gateway Integration | Planned |
 
 ---
 
-## Tech Stack
+## Application Screenshots
 
-### Frontend
-| Technology | Description |
-|---|---|
-| **React 19** | UI Library |
-| **Vite** | Build Tool |
-| **TypeScript** | Type Safety |
-| **Tailwind CSS v4** | Utility-first CSS |
-| **shadcn/ui** | UI Component System |
-| **Axios** | HTTP Client |
-| **React Router** | Navigation |
-| **Zustand** | State Management |
+### Login
+![Nestly Login](screenshots/login.png)
 
-### Backend
-| Technology | Description |
-|---|---|
-| **NestJS** | Node.js Framework |
-| **TypeScript** | Type Safety |
-| **Prisma** | ORM |
-| **PostgreSQL** | Relational Database |
-| **Passport & JWT** | Authentication |
-| **bcrypt** | Password Hashing |
-| **class-validator** | Payload Validation |
-| **Helmet** | HTTP Security Headers |
-| **@nestjs/throttler** | Rate Limiting |
+### Owner Dashboard
+![Nestly Owner Dashboard](screenshots/owner-dashboard.png)
 
-### Testing
-| Technology | Description |
-|---|---|
-| **Jest** | Test Runner |
-| **Supertest** | HTTP Assertions |
-| **E2E Tests** | End-to-End API Tests |
+### Properties
+![Nestly Properties](screenshots/properties.png)
+
+### Property Units
+![Nestly Property Units](screenshots/property-units.png)
+
+### Tenant Management
+![Nestly Tenant Management](screenshots/tenants.png)
+
+### Tenant Lease
+![Nestly Tenant Lease](screenshots/tenant-lease.png)
+
+### Payment Management
+![Nestly Payments](screenshots/payments.png)
+
+### Payment Detail
+<!-- TODO: Add missing screenshot screenshots/payment-detail.png -->
+
+### Maintenance Management
+![Nestly Maintenance](screenshots/maintenance.png)
+
+### Maintenance Detail
+<!-- TODO: Add missing screenshot screenshots/maintenance-detail.png -->
 
 ---
 
-## Project Structure
+## Security
 
-```text
-nestly/
-├── Backend/
-│   ├── prisma/             # Database schema and migrations
-│   ├── src/                # NestJS application code
-│   │   ├── auth/           # Authentication logic
-│   │   ├── property/       # Property management
-│   │   ├── unit/           # Unit management
-│   │   ├── tenant/         # Tenant profiles
-│   │   ├── lease/          # Lease lifecycle
-│   │   ├── payment/        # Payment tracking
-│   │   ├── maintenance/    # Issue reporting
-│   │   ├── dashboard/      # Analytics aggregation
-│   │   ├── prisma/         # Prisma service wrapper
-│   │   └── common/         # Guards, decorators, filters
-│   └── test/               # E2E test suites
-│
-├── Frontend/
-│   └── src/                # React application code
-│
-├── docs/                   # Additional documentation
-├── .env.example            # Environment variables template
-├── .gitignore
-├── LICENSE
-└── README.md               # This file
+Nestly implements multiple layers of security controls:
+- **JWT authentication**: Stateless, secure token validation.
+- **RBAC**: Enforces role constraints globally.
+- **Ownership-level authorization**: Prevents lateral access to other tenants' data.
+- **DTO validation**: Strict validation using `class-validator` with `whitelist` and `forbidNonWhitelisted` enabled.
+- **Helmet**: Sets critical HTTP security headers automatically.
+- **Authentication rate limiting**: Prevents brute forcing login endpoints.
+- **CORS configured through FRONTEND_URL**: Restricts API access to known origins.
+- **Prisma exception filtering**: Prevents database schema leaks in error messages.
+- **Environment validation**: Fails fast if security configurations are missing.
+- **No secrets committed to Git**: `.env` configurations are explicitly ignored.
+
+---
+
+## Testing
+
+**Backend:**
+```bash
+npm run test:e2e
+```
+*Current verified result: 67/67 E2E tests passing*
+
+Other commands:
+```bash
+npm run build
+npm run lint
+```
+
+**Frontend:**
+```bash
+npm run build
+npm run lint
 ```
 
 ---
 
 ## Local Development
 
-### Prerequisites
-- Node.js
-- PostgreSQL
-
-### Backend Setup
-
-1. Navigate to the backend directory:
+### Backend
 ```bash
 cd Backend
 npm install
-```
-
-2. Configure environment variables (copy `.env.example` to `.env` and fill the values).
-
-3. Set up the database:
-```bash
-npx prisma generate
-npx prisma migrate dev
-```
-
-4. Start the server:
-```bash
 npm run start:dev
 ```
+Ensure you have copied `Backend/.env.example` to `Backend/.env` and filled in the values (including your PostgreSQL `DATABASE_URL`).
+Run `npx prisma migrate dev` to apply the database schema.
 
-### Frontend Setup
-
-1. Navigate to the frontend directory:
+### Frontend
 ```bash
 cd Frontend
 npm install
-```
-
-2. Configure environment variables (if required).
-
-3. Start the dev server:
-```bash
 npm run dev
 ```
-
-### Expected URLs
-- **Backend API**: http://localhost:3000
-- **Backend Health Check**: http://localhost:3000/health
-- **Frontend App**: http://localhost:5173
-
----
-
-## Environment Variables
-
-### Backend
-- `DATABASE_URL`: Connection string for PostgreSQL.
-- `JWT_SECRET`: Secret key for signing JWTs.
-- `JWT_EXPIRES_IN`: Expiration time for JWTs (e.g., '1d').
-- `FRONTEND_URL`: CORS allowed origin.
-- `NODE_ENV`: 'development' or 'production'.
-- `PORT`: Server port (default 3000).
-
-### Frontend
-- `VITE_API_BASE_URL`: URL of the backend API.
-
-> [!WARNING]
-> Never commit `.env` files or production secrets to version control.
-
----
-
-## Testing
-
-### Backend Commands
-- **Build**: `npm run build`
-- **Lint**: `npm run lint`
-- **Unit Tests**: `npm run test`
-- **E2E Tests**: `npm run test:e2e`
-
-*Note: Currently, 67/67 backend E2E tests are passing.*
-
-### Frontend Commands
-- **Build**: `npm run build`
-- **Lint**: `npm run lint`
+Ensure you have copied `Frontend/.env.example` to `Frontend/.env` and set `VITE_API_BASE_URL`.
 
 ---
 
 ## Documentation
 
-For deeper technical details, please refer to the documents below:
-
-- [API Documentation](docs/api.md)
-- [Architecture Documentation](docs/architecture.md)
-- [Database Documentation](docs/database.md)
+- [Architecture Reference](docs/architecture.md)
+- [Database Design](docs/database.md)
+- [API Reference](docs/api.md)
 
 ---
 
-## License
+## Key Engineering Decisions
 
-This project is licensed under the [MIT License](LICENSE).
+1. **Why PostgreSQL?**
+   Provides robust relational integrity, ACID compliance, and excellent support for JSON/array structures when needed.
+2. **Why Prisma?**
+   Offers type-safe database queries, auto-generated TypeScript types, and an intuitive schema definition format.
+3. **Why modular NestJS architecture?**
+   Enforces separation of concerns, making the codebase scalable and easier to test via dependency injection.
+4. **How multi-tenant ownership isolation works.**
+   Every resource retrieval or mutation query explicitly filters by `ownerId` (or related unit's property `ownerId`), ensuring users can only interact with their own data.
+5. **Difference between RBAC and resource ownership checks.**
+   RBAC determines *what* operations a user can perform (e.g., an Owner can create properties). Resource ownership determines *which* specific records they can perform it on (e.g., an Owner can only edit *their* properties).
+6. **Why dashboard aggregation uses database-level operations.**
+   Using SQL aggregates (COUNT, SUM, GROUP BY) via Prisma drastically reduces memory overhead and network payload compared to calculating statistics in memory on the Node.js process.
+7. **Why lease and maintenance workflows enforce directional lifecycle transitions.**
+   Maintains domain integrity (e.g., a lease cannot go from `TERMINATED` back to `PENDING` without creating a new lease entity).
+8. **Why security controls like Helmet, throttling, validation and Prisma filtering were added.**
+   To proactively mitigate OWASP Top 10 vulnerabilities like injection, cross-site scripting (XSS), misconfiguration, and brute-force attacks at the framework level.
