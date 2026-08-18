@@ -16,9 +16,7 @@ Nestly is a full-stack property management SaaS platform for property owners and
 | Tenants | ✅ Manage | 👁 View profile |
 | Leases | ✅ Create / Terminate | 👁 View active lease |
 | Payments | ✅ Record / History | 👁 View history |
-| Invoices | ✅ Generate PDF | ✅ Download own |
 | Maintenance | ✅ View / Update | ✅ Create requests |
-| Notifications | ✅ Lease & rent reminders | ✅ Reminders |
 | Dashboard | ✅ Analytics | — |
 
 ---
