@@ -11,6 +11,8 @@ import SettingsPlaceholder from '../pages/settings/SettingsPlaceholder';
 
 import Properties from '../pages/properties/Properties';
 import PropertyDetail from '../pages/properties/PropertyDetail';
+import Tenants from '../pages/tenants/Tenants';
+import TenantProfile from '../pages/tenants/TenantProfile';
 
 export function AppRouter() {
   return (
@@ -53,14 +55,8 @@ export function AppRouter() {
                 path="/units/:id"
                 element={<PlaceholderPage title="Unit Detail" description="Unit detail coming soon" />}
               />
-              <Route
-                path="/tenants"
-                element={<PlaceholderPage title="Tenants" description="Tenants coming soon" />}
-              />
-              <Route
-                path="/tenants/:id"
-                element={<PlaceholderPage title="Tenant Profile" description="Tenant profile coming soon" />}
-              />
+              <Route path="/tenants" element={<Tenants />} />
+              <Route path="/tenants/:id" element={<TenantProfile />} />
             </Route>
 
             {/* Tenant only */}
