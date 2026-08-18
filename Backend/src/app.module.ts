@@ -3,6 +3,8 @@ import { ConfigModule } from '@nestjs/config';
 import { PrismaModule } from './prisma/prisma.module';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { ThrottlerModule } from '@nestjs/throttler';
+import { validate } from './config/env.validation';
 
 import { AuthModule } from './auth/auth.module';
 import { PropertyModule } from './property/property.module';
@@ -32,7 +34,16 @@ import { DashboardModule } from './dashboard/dashboard.module';
     ConfigModule.forRoot({
       isGlobal: true,
       envFilePath: '.env',
+      validate,
     }),
+
+    // ─── Rate Limiting ────────────────────────────────────────────────────────
+    ThrottlerModule.forRoot([
+      {
+        ttl: 60000, // 1 minute
+        limit: 10, // 10 requests per minute
+      },
+    ]),
 
     // ─── Database ─────────────────────────────────────────────────────────────
     PrismaModule,

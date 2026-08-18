@@ -35,7 +35,13 @@ export class PrismaService
     } catch (error) {
       // In development without a database configured, log a warning and
       // continue — non-database routes (e.g. GET /health) will still work.
-      // In production, DATABASE_URL must be correctly set.
+      // In production, DATABASE_URL must be correctly set, so fail the app.
+      if (process.env.NODE_ENV === 'production') {
+        this.logger.error(
+          `Database connection failed: ${(error as Error).message}`,
+        );
+        throw error;
+      }
       this.logger.warn(
         `Database connection failed: ${(error as Error).message}. ` +
           'Non-database routes will still function. ' +

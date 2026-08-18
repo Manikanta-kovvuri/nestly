@@ -1,7 +1,10 @@
 import { NestFactory } from '@nestjs/core';
 import { ValidationPipe, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import helmet from 'helmet';
+import * as express from 'express';
 import { AppModule } from './app.module';
+import { PrismaClientExceptionFilter } from './common/filters/prisma-client-exception.filter';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
@@ -14,6 +17,16 @@ async function bootstrap() {
     'FRONTEND_URL',
     'http://localhost:5173',
   );
+
+  // ─── Security Headers & Payload Limits ──────────────────────────────────────
+  app.use(helmet());
+  app.use(express.json({ limit: '10mb' }));
+
+  // Enable trust proxy so rate limiting accurately tracks client IPs behind PaaS/Reverse proxies
+  const expressInstance = app
+    .getHttpAdapter()
+    .getInstance() as express.Application;
+  expressInstance.set('trust proxy', 1);
 
   // ─── CORS ───────────────────────────────────────────────────────────────────
   // Restrict to the configured frontend origin — do not use wildcard in production.
@@ -44,6 +57,12 @@ async function bootstrap() {
   app.setGlobalPrefix('api/v1', {
     exclude: ['health'],
   });
+
+  // ─── Global Filters ─────────────────────────────────────────────────────────
+  app.useGlobalFilters(new PrismaClientExceptionFilter());
+
+  // ─── Graceful Shutdown ──────────────────────────────────────────────────────
+  app.enableShutdownHooks();
 
   await app.listen(port);
 
