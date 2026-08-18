@@ -23,9 +23,12 @@ export class TenantController {
   constructor(private readonly tenantService: TenantService) {}
 
   @Post()
-  @Roles(Role.OWNER, Role.ADMIN)
-  create(@Body() createTenantDto: CreateTenantDto) {
-    return this.tenantService.create(createTenantDto);
+  @Roles(Role.OWNER)
+  create(
+    @Body() createTenantDto: CreateTenantDto,
+    @CurrentUser() user: { id: number; role: string },
+  ) {
+    return this.tenantService.create(createTenantDto, user);
   }
 
   @Get()

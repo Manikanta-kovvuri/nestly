@@ -14,7 +14,10 @@ import { Role } from '@prisma/client';
 export class TenantService {
   constructor(private prisma: PrismaService) {}
 
-  async create(createTenantDto: CreateTenantDto) {
+  async create(
+    createTenantDto: CreateTenantDto,
+    userAuth: { id: number; role: string },
+  ) {
     const { name, email, password } = createTenantDto;
     const normalizedEmail = email.trim().toLowerCase();
 
@@ -39,7 +42,9 @@ export class TenantService {
           passwordHash,
           role: Role.TENANT,
           tenantProfile: {
-            create: {}, // Creates the empty Tenant record pointing back to userId
+            create: {
+              ownerId: userAuth.id,
+            },
           },
         },
         include: {
@@ -69,18 +74,10 @@ export class TenantService {
       });
     }
 
-    // For OWNER: return only tenants who have leases associated with units belonging to that owner.
+    // For OWNER: return only tenants directly owned by them
     return this.prisma.tenant.findMany({
       where: {
-        leases: {
-          some: {
-            unit: {
-              property: {
-                ownerId: user.id,
-              },
-            },
-          },
-        },
+        ownerId: user.id,
       },
       include: { user: { select: { id: true, name: true, email: true } } },
     });
@@ -112,11 +109,7 @@ export class TenantService {
     }
 
     if (user.role === Role.OWNER) {
-      // Owner must have a lease associated with this tenant
-      const isAssociated = tenant.leases.some(
-        (lease) => lease.unit.property.ownerId === user.id,
-      );
-      if (!isAssociated) {
+      if (tenant.ownerId !== user.id) {
         throw new ForbiddenException('You do not have access to this tenant');
       }
     }

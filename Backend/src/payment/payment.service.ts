@@ -93,7 +93,11 @@ export class PaymentService {
                 property: true,
               },
             },
-            tenant: true,
+            tenant: {
+              include: {
+                user: true,
+              },
+            },
           },
         },
       },
@@ -114,10 +118,7 @@ export class PaymentService {
       throw new ForbiddenException('You do not have access to this payment');
     }
 
-    // Avoid returning deeply nested structures unnecessarily
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { lease: _, ...result } = payment;
-    return result;
+    return payment;
   }
 
   async update(

@@ -13,6 +13,8 @@ import Properties from '../pages/properties/Properties';
 import PropertyDetail from '../pages/properties/PropertyDetail';
 import Tenants from '../pages/tenants/Tenants';
 import TenantProfile from '../pages/tenants/TenantProfile';
+import Payments from '../pages/payments/Payments';
+import PaymentDetail from '../pages/payments/PaymentDetail';
 
 export function AppRouter() {
   return (
@@ -34,10 +36,8 @@ export function AppRouter() {
             <Route path="/settings" element={<SettingsPlaceholder />} />
             
             {/* Payment & Maintenance available to all roles (but data differs) */}
-            <Route
-              path="/payments"
-              element={<PlaceholderPage title="Payments" description="Payments coming soon" />}
-            />
+            <Route path="/payments" element={<Payments />} />
+            <Route path="/payments/:id" element={<PaymentDetail />} />
             <Route
               path="/maintenance"
               element={<PlaceholderPage title="Maintenance" description="Maintenance coming soon" />}

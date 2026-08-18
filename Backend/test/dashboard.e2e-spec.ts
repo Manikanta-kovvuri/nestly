@@ -83,7 +83,7 @@ describe('DashboardController (e2e)', () => {
         name: 'T1',
         role: Role.TENANT,
         passwordHash: pwdHash,
-        tenantProfile: { create: {} },
+        tenantProfile: { create: { ownerId: owner.id } },
       },
       include: { tenantProfile: true },
     });
@@ -95,7 +95,7 @@ describe('DashboardController (e2e)', () => {
         name: 'T2',
         role: Role.TENANT,
         passwordHash: pwdHash,
-        tenantProfile: { create: {} },
+        tenantProfile: { create: { ownerId: owner.id } },
       },
     });
 

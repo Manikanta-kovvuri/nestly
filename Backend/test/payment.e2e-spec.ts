@@ -65,7 +65,7 @@ describe('PaymentController (e2e)', () => {
         name: 'T1',
         role: Role.TENANT,
         passwordHash: pwdHash,
-        tenantProfile: { create: {} },
+        tenantProfile: { create: { ownerId: owner.id } },
       },
       include: { tenantProfile: true },
     });
@@ -200,6 +200,12 @@ describe('PaymentController (e2e)', () => {
       expect(res.status).toBe(200);
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       expect(res.body.id).toBe(paymentId);
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      expect(res.body.lease).toBeDefined();
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      expect(res.body.lease.tenant.user.email).toBe(tenantEmail);
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      expect(res.body.lease.unit.property.name).toBe('P1');
     });
 
     it('should allow TENANT access to their own payment', async () => {

@@ -11,11 +11,13 @@ describe('TenantController (e2e)', () => {
   let prisma: PrismaService;
 
   let ownerToken: string;
+  let ownerBToken: string;
   let tenantToken: string;
 
   let tenantId: number;
 
   const ownerEmail = `o_tenant_e2e_${Date.now()}@test.com`;
+  const ownerBEmail = `ob_tenant_e2e_${Date.now()}@test.com`;
   const tenantEmail = `t_tenant_e2e_${Date.now()}@test.com`;
 
   beforeAll(async () => {
@@ -46,6 +48,16 @@ describe('TenantController (e2e)', () => {
       },
     });
 
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const ownerB = await prisma.user.create({
+      data: {
+        email: ownerBEmail,
+        name: 'O2',
+        role: Role.OWNER,
+        passwordHash: pwdHash,
+      },
+    });
+
     const login = async (email: string) => {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
       const res = await request(app.getHttpServer())
@@ -57,12 +69,14 @@ describe('TenantController (e2e)', () => {
 
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     ownerToken = await login(ownerEmail);
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+    ownerBToken = await login(ownerBEmail);
   });
 
   afterAll(async () => {
     await prisma.tenant.deleteMany({ where: { user: { email: tenantEmail } } });
     await prisma.user.deleteMany({
-      where: { email: { in: [ownerEmail, tenantEmail] } },
+      where: { email: { in: [ownerEmail, ownerBEmail, tenantEmail] } },
     });
     await app.close();
   });
@@ -131,6 +145,53 @@ describe('TenantController (e2e)', () => {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-assignment
       const fetchedId: number = res.body[0].id;
       expect(fetchedId).toBe(tenantId);
+    });
+
+    it('should allow OWNER A to see the tenant they created', async () => {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+      const res = await request(app.getHttpServer())
+        .get('/api/v1/tenants')
+        .set('Authorization', `Bearer ${ownerToken}`);
+
+      expect(res.status).toBe(200);
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      expect(res.body.length).toBe(1);
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-assignment
+      const fetchedId: number = res.body[0].id;
+      expect(fetchedId).toBe(tenantId);
+    });
+
+    it('should NOT allow OWNER B to see OWNER A’s tenant', async () => {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+      const res = await request(app.getHttpServer())
+        .get('/api/v1/tenants')
+        .set('Authorization', `Bearer ${ownerBToken}`);
+
+      expect(res.status).toBe(200);
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      expect(res.body.length).toBe(0);
+    });
+  });
+
+  describe('GET /api/v1/tenants/:id', () => {
+    it('should allow OWNER A to access the tenant they created', async () => {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+      const res = await request(app.getHttpServer())
+        .get(`/api/v1/tenants/${tenantId}`)
+        .set('Authorization', `Bearer ${ownerToken}`);
+
+      expect(res.status).toBe(200);
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      expect(res.body.id).toBe(tenantId);
+    });
+
+    it('should NOT allow OWNER B to access OWNER A’s tenant', async () => {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+      const res = await request(app.getHttpServer())
+        .get(`/api/v1/tenants/${tenantId}`)
+        .set('Authorization', `Bearer ${ownerBToken}`);
+
+      expect(res.status).toBe(403);
     });
   });
 });
