@@ -6,7 +6,7 @@ import { PlaceholderPage } from '@/pages/PlaceholderPage';
 
 import Login from '../pages/auth/Login';
 import Register from '../pages/auth/Register';
-import DashboardPlaceholder from '../pages/dashboard/DashboardPlaceholder';
+import DashboardRouter from '../pages/dashboard/DashboardRouter';
 import SettingsPlaceholder from '../pages/settings/SettingsPlaceholder';
 
 export function AppRouter() {
@@ -25,7 +25,7 @@ export function AppRouter() {
           <Route element={<DashboardLayout />}>
             
             {/* Any authenticated role */}
-            <Route path="/dashboard" element={<DashboardPlaceholder />} />
+            <Route path="/dashboard" element={<DashboardRouter />} />
             <Route path="/settings" element={<SettingsPlaceholder />} />
             
             {/* Payment & Maintenance available to all roles (but data differs) */}
