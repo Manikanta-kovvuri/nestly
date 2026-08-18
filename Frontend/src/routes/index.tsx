@@ -9,6 +9,9 @@ import Register from '../pages/auth/Register';
 import DashboardRouter from '../pages/dashboard/DashboardRouter';
 import SettingsPlaceholder from '../pages/settings/SettingsPlaceholder';
 
+import Properties from '../pages/properties/Properties';
+import PropertyDetail from '../pages/properties/PropertyDetail';
+
 export function AppRouter() {
   return (
     <BrowserRouter>
@@ -44,14 +47,8 @@ export function AppRouter() {
 
             {/* Owner/Admin only */}
             <Route element={<ProtectedRoute allowedRoles={['OWNER', 'ADMIN']} />}>
-              <Route
-                path="/properties"
-                element={<PlaceholderPage title="Properties" description="Properties coming soon" />}
-              />
-              <Route
-                path="/properties/:id"
-                element={<PlaceholderPage title="Property Detail" description="Property detail coming soon" />}
-              />
+              <Route path="/properties" element={<Properties />} />
+              <Route path="/properties/:id" element={<PropertyDetail />} />
               <Route
                 path="/units/:id"
                 element={<PlaceholderPage title="Unit Detail" description="Unit detail coming soon" />}

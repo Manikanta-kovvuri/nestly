@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { Users, IndianRupee, PieChart, Plus } from 'lucide-react';
 import { dashboardApi } from '../../lib/dashboardApi';
 import type { OwnerDashboardData } from '../../lib/dashboardApi';
@@ -96,10 +97,12 @@ export default function OwnerDashboard() {
           <h1 className="text-3xl font-bold tracking-tight text-gray-900">Dashboard</h1>
           <p className="mt-1 text-gray-500">Overview of your properties and rental operations.</p>
         </div>
-        <Button className="shrink-0" disabled>
-          <Plus className="mr-2 h-4 w-4" />
-          Add Property
-        </Button>
+        <Link to="/properties">
+          <Button className="shrink-0">
+            <Plus className="mr-2 h-4 w-4" />
+            Add Property
+          </Button>
+        </Link>
       </div>
 
       {/* KPI Cards */}
@@ -131,15 +134,19 @@ export default function OwnerDashboard() {
             <p className="mt-1 text-sm text-gray-500">
               Add your first property to start managing your portfolio.
             </p>
-            <Button className="mt-6" disabled>
-              <Plus className="mr-2 h-4 w-4" />
-              Add Property
-            </Button>
+            <Link to="/properties">
+              <Button className="mt-6">
+                <Plus className="mr-2 h-4 w-4" />
+                Add Property
+              </Button>
+            </Link>
           </div>
         ) : (
           <PropertyGrid>
             {properties.map((property) => (
-              <PropertyCard key={property.id} property={property} />
+              <Link key={property.id} to={`/properties/${property.id}`} className="block focus:outline-none">
+                <PropertyCard property={property} />
+              </Link>
             ))}
           </PropertyGrid>
         )}
