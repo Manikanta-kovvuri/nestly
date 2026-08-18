@@ -90,6 +90,13 @@ export class MaintenanceService {
             property: true,
           },
         },
+        reportedBy: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+          },
+        },
       },
     });
 
@@ -114,10 +121,7 @@ export class MaintenanceService {
       );
     }
 
-    // Avoid returning deeply nested unit structures unnecessarily
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { unit: _, ...result } = maintenance;
-    return result;
+    return maintenance;
   }
 
   async updateStatus(

@@ -209,6 +209,22 @@ describe('MaintenanceController (e2e)', () => {
       expect(res.status).toBe(200);
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       expect(res.body.id).toBe(maintenanceId);
+
+      expect(Array.isArray(res.body)).toBe(false);
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      expect(res.body.unit).toBeDefined();
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      expect(res.body.unit.property).toBeDefined();
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      expect(res.body.unit.property.name).toBe('P1');
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      expect(res.body.unit.unitNo).toBe(101);
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      expect(res.body.reportedBy).toBeDefined();
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      expect(res.body.reportedBy.name).toBe('T1');
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      expect(res.body.reportedBy.email).toBe(tenantEmail);
     });
 
     it('should allow TENANT access to their own request', async () => {

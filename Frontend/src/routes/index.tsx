@@ -15,6 +15,8 @@ import Tenants from '../pages/tenants/Tenants';
 import TenantProfile from '../pages/tenants/TenantProfile';
 import Payments from '../pages/payments/Payments';
 import PaymentDetail from '../pages/payments/PaymentDetail';
+import Maintenance from '../pages/maintenance/Maintenance';
+import MaintenanceDetail from '../pages/maintenance/MaintenanceDetail';
 
 export function AppRouter() {
   return (
@@ -38,14 +40,8 @@ export function AppRouter() {
             {/* Payment & Maintenance available to all roles (but data differs) */}
             <Route path="/payments" element={<Payments />} />
             <Route path="/payments/:id" element={<PaymentDetail />} />
-            <Route
-              path="/maintenance"
-              element={<PlaceholderPage title="Maintenance" description="Maintenance coming soon" />}
-            />
-            <Route
-              path="/maintenance/:id"
-              element={<PlaceholderPage title="Maintenance Detail" description="Maintenance Detail coming soon" />}
-            />
+            <Route path="/maintenance" element={<Maintenance />} />
+            <Route path="/maintenance/:id" element={<MaintenanceDetail />} />
 
             {/* Owner/Admin only */}
             <Route element={<ProtectedRoute allowedRoles={['OWNER', 'ADMIN']} />}>
